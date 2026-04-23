@@ -158,10 +158,15 @@ def run_infer(image_path=None):
         img = cv2.imread(image_file.replace("\\", "/"))
         if img is None:
             continue
-        pred = model.predict(img)
+        pred  = model.predict(img)
         if not isinstance(pred, str):
             pred = ""
-        cer = get_cer(pred, label)
+        if not isinstance(label, str):
+            label = "" if label != label else str(label)  # handles NaN
+        try:
+            cer = get_cer(pred, label)
+        except Exception:
+            cer = 1.0
         cer_list.append(cer)
         print(f"  label={label:20s}  pred={pred:20s}  CER={cer:.3f}")
 
