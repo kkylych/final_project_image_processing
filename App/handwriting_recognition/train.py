@@ -25,6 +25,24 @@ from mltu.annotations.images import CVImage
 from mltu.tensorflow.dataProvider import DataProvider
 from mltu.tensorflow.losses import CTCloss
 from mltu.tensorflow.callbacks import Model2onnx, TrainLogger
+
+# Patch Model2onnx for Keras 3 + tf2onnx compatibility (input_signature required)
+@staticmethod
+def _model2onnx_fixed(model, onnx_model_path):
+    try:
+        import tf2onnx
+        input_shapes = model.input_shape
+        if not isinstance(input_shapes, list):
+            input_shapes = [input_shapes]
+        input_signature = [
+            tf.TensorSpec(shape=(None,) + shape[1:], dtype=tf.float32)
+            for shape in input_shapes
+        ]
+        tf2onnx.convert.from_keras(model, input_signature=input_signature, output_path=onnx_model_path)
+    except Exception as e:
+        print(e)
+
+Model2onnx.model2onnx = _model2onnx_fixed
 from mltu.tensorflow.metrics import CWERMetric
 
 from model import train_model
