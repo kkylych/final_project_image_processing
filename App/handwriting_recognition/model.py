@@ -1,3 +1,16 @@
+"""
+model.py — Handwriting Recognition Model Architecture
+
+Defines a hybrid ResNet-BiLSTM model for sequence recognition:
+  - Input: (height, width, channels) image
+  - Backbone: 9 residual blocks (CNN) that extract visual features
+  - Decoder: Bidirectional LSTM + Dense softmax for character probabilities
+  - Loss: CTC (Connectionist Temporal Classification) — applied during training
+
+The model outputs a probability distribution over (vocab_size + 1) classes
+at each time step, where the extra class is the CTC blank token.
+"""
+
 from keras import layers
 from keras.models import Model
 
@@ -5,7 +18,18 @@ from mltu.tensorflow.model_utils import residual_block
 
 
 def train_model(input_dim, output_dim, activation="leaky_relu", dropout=0.2):
-    
+    """Build and return the ResNet-BiLSTM model.
+
+    Args:
+        input_dim (tuple): Input shape (height, width, channels), e.g. (32, 128, 3).
+        output_dim (int): Number of unique characters in the vocabulary.
+        activation (str): Activation function for residual blocks. Default: 'leaky_relu'.
+        dropout (float): Dropout rate applied after each residual block and BiLSTM. Default: 0.2.
+
+    Returns:
+        keras.Model: Compiled-ready model with input shape input_dim
+                     and output shape (time_steps, output_dim + 1).
+    """
     inputs = layers.Input(shape=input_dim, name="input")
 
     # normalize images here instead in preprocessing step

@@ -4,7 +4,12 @@ __pycache__
 venv
 
 Datasets/*
-Models/*
+# Track trained model weights (.h5, .onnx) but ignore everything else inside Models/
+Models/**
+!Models/
+!Models/**/*.h5
+!Models/**/*.onnx
+!Models/**/*.yaml
 dist
 
 !*.md
