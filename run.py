@@ -159,6 +159,8 @@ def run_infer(image_path=None):
         if img is None:
             continue
         pred = model.predict(img)
+        if not isinstance(pred, str):
+            pred = ""
         cer = get_cer(pred, label)
         cer_list.append(cer)
         print(f"  label={label:20s}  pred={pred:20s}  CER={cer:.3f}")
