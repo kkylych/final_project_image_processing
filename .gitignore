@@ -1,0 +1,21 @@
+__pycache__
+*.egg-info
+*.pyc
+venv
+
+Datasets/*
+Models/*
+dist
+
+!*.md
+
+.idea
+.python-version
+
+test
+build
+yolov8*
+pyrightconfig.json
+
+# One-off / dev utility scripts
+bin/

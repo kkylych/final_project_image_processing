@@ -1,0 +1,131 @@
+"""
+Entry point for the handwriting recognition project.
+
+Usage:
+  python run.py train              # download dataset and train the model
+  python run.py infer              # run inference on the validation set (requires trained model)
+  python run.py infer path/to/img  # run inference on a single image file
+"""
+
+import os
+import sys
+import argparse
+
+APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "App", "handwriting_recognition")
+
+
+def run_train():
+    """Launch training from the App directory so all relative paths resolve correctly."""
+    train_script = os.path.join(APP_DIR, "train.py")
+    print(f"Starting training: {train_script}")
+    # Use subprocess so the script runs in its own interpreter context
+    import subprocess
+    result = subprocess.run([sys.executable, train_script], check=False)
+    return result.returncode
+
+
+def run_infer(image_path=None):
+    """Run inference. If image_path is given, predict that single image."""
+    import cv2
+    import numpy as np
+    from mltu.configs import BaseModelConfigs
+    from mltu.inferenceModel import OnnxInferenceModel
+    from mltu.utils.text_utils import ctc_decoder
+
+    models_base = os.path.join(APP_DIR, "Models", "handwriting_recognition")
+    if not os.path.exists(models_base):
+        print(f"ERROR: No trained models found at:\n  {models_base}")
+        print("Run training first:  python run.py train")
+        return 1
+
+    # Pick the most recently trained model
+    candidates = sorted(
+        [d for d in os.listdir(models_base) if os.path.isdir(os.path.join(models_base, d))],
+        reverse=True,
+    )
+    if not candidates:
+        print(f"ERROR: No model subdirectory found in {models_base}")
+        return 1
+
+    model_dir = os.path.join(models_base, candidates[0])
+    configs_path = os.path.join(model_dir, "configs.yaml")
+    onnx_path = os.path.join(model_dir, "model.onnx")
+
+    if not os.path.exists(configs_path):
+        print(f"ERROR: configs.yaml not found in {model_dir}")
+        return 1
+    if not os.path.exists(onnx_path):
+        print(f"ERROR: model.onnx not found in {model_dir}")
+        print("Training may have completed but ONNX export failed. Check training logs.")
+        return 1
+
+    configs = BaseModelConfigs.load(configs_path)
+
+    class ImageToWordModel(OnnxInferenceModel):
+        def __init__(self, char_list, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.char_list = char_list
+
+        def predict(self, image: np.ndarray):
+            image = cv2.resize(image, self.input_shapes[0][1:3][::-1])
+            image_pred = np.expand_dims(image, axis=0).astype(np.float32)
+            preds = self.model.run(self.output_names, {self.input_names[0]: image_pred})[0]
+            return ctc_decoder(preds, self.char_list)[0]
+
+    model = ImageToWordModel(model_path=onnx_path, char_list=configs.vocab)
+
+    if image_path:
+        # Single image inference
+        if not os.path.exists(image_path):
+            print(f"ERROR: Image not found: {image_path}")
+            return 1
+        img = cv2.imread(image_path)
+        if img is None:
+            print(f"ERROR: Could not read image: {image_path}")
+            return 1
+        prediction = model.predict(img)
+        print(f"Image : {image_path}")
+        print(f"Result: {prediction}")
+        return 0
+
+    # Batch inference on validation CSV
+    import pandas as pd
+    from tqdm import tqdm
+
+    val_csv = os.path.join(model_dir, "val.csv")
+    if not os.path.exists(val_csv):
+        print(f"ERROR: val.csv not found at {val_csv}")
+        return 1
+
+    from mltu.utils.text_utils import get_cer
+    df = pd.read_csv(val_csv).values.tolist()
+    cer_list = []
+    for row in tqdm(df, desc="Inference"):
+        image_file, label = row[0], row[1]
+        img = cv2.imread(image_file.replace("\\", "/"))
+        if img is None:
+            continue
+        pred = model.predict(img)
+        cer = get_cer(pred, label)
+        cer_list.append(cer)
+        print(f"  label={label:20s}  pred={pred:20s}  CER={cer:.3f}")
+
+    if cer_list:
+        print(f"\nAverage CER: {sum(cer_list)/len(cer_list):.4f}  over {len(cer_list)} samples")
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Handwriting Recognition")
+    parser.add_argument("mode", choices=["train", "infer"], help="train or infer")
+    parser.add_argument("image", nargs="?", default=None, help="Path to image (infer mode only)")
+    args = parser.parse_args()
+
+    if args.mode == "train":
+        sys.exit(run_train())
+    elif args.mode == "infer":
+        sys.exit(run_infer(args.image))
+
+
+if __name__ == "__main__":
+    main()
