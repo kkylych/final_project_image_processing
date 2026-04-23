@@ -1,0 +1,9 @@
+batch_size: 16
+height: 32
+learning_rate: 0.0005
+max_text_length: 21
+model_path: /content/final_project_image_processing/App/handwriting_recognition/Models/handwriting_recognition/202604231631
+train_epochs: 5
+train_workers: 4
+vocab: BY!1TqCVSuj,e0Dv(W.JlPIxn+/LKR7p&*gwsEh:Fko?m9Gi'6t)azHQ#"UN2dX4;b3AfyZOcr5M8-
+width: 128

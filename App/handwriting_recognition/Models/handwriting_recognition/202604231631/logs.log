@@ -1,0 +1,27 @@
+2026-04-23 16:31:55,281 - ImageReader - WARNING - Image Datasets/IAM_Words/words/a01/a01-117/a01-117-05-02.png could not be read, returning None.
+2026-04-23 16:31:55,281 - DataProvider - WARNING - Data or annotation is None, marking for removal on epoch end.
+2026-04-23 16:31:55,281 - DataProvider - WARNING - Data or annotation is None, skipping.
+2026-04-23 16:48:11,095 - ImageReader - WARNING - Image Datasets/IAM_Words/words/r06/r06-022/r06-022-03-05.png could not be read, returning None.
+2026-04-23 16:48:11,095 - DataProvider - WARNING - Data or annotation is None, marking for removal on epoch end.
+2026-04-23 16:48:11,095 - DataProvider - WARNING - Data or annotation is None, skipping.
+2026-04-23 17:09:14,378 - DataProvider - WARNING - Removing ['Datasets/IAM_Words/words/a01/a01-117/a01-117-05-02.png', 'Powell'] from dataset.
+2026-04-23 17:09:14,378 - DataProvider - WARNING - Removing ['Datasets/IAM_Words/words/r06/r06-022/r06-022-03-05.png', 'more'] from dataset.
+2026-04-23 17:10:17,480 - absl - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-04-23 17:10:17,742 - root - INFO - Epoch 0; CER: 0.8172878623008728; WER: 0.9150999784469604; loss: 12.598575592041016; val_CER: 0.8024113774299622; val_WER: 0.9090551137924194; val_loss: 11.55367374420166; learning_rate: 0.0005000000237487257
+2026-04-23 17:49:39,393 - absl - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-04-23 17:49:39,661 - root - INFO - Epoch 1; CER: 0.6899111866950989; WER: 0.8463074564933777; loss: 9.246384620666504; val_CER: 0.6795066595077515; val_WER: 0.8403539657592773; val_loss: 8.018783569335938; learning_rate: 0.0005000000237487257
+2026-04-23 18:29:24,447 - absl - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-04-23 18:29:24,740 - root - INFO - Epoch 2; CER: 0.6068419814109802; WER: 0.7973694801330566; loss: 7.389452934265137; val_CER: 0.5987856984138489; val_WER: 0.7924882769584656; val_loss: 6.078213691711426; learning_rate: 0.0005000000237487257
+2026-04-23 19:07:41,685 - absl - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-04-23 19:07:41,955 - root - INFO - Epoch 3; CER: 0.5431628227233887; WER: 0.757697343826294; loss: 6.007699966430664; val_CER: 0.5398962497711182; val_WER: 0.756000280380249; val_loss: 7.079913139343262; learning_rate: 0.0005000000237487257
+2026-04-23 19:46:13,998 - absl - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-04-23 19:46:14,253 - root - INFO - Epoch 4; CER: 0.4958042800426483; WER: 0.7246352434158325; loss: 5.067444324493408; val_CER: 0.4905729293823242; val_WER: 0.7203039526939392; val_loss: 3.8860747814178467; learning_rate: 0.0005000000237487257
+2026-04-23 19:46:16,410 - tf2onnx.tfonnx - INFO - Using tensorflow=2.19.0, onnx=1.21.0, tf2onnx=1.17.0/None
+2026-04-23 19:46:16,410 - tf2onnx.tfonnx - INFO - Using opset <onnx, 15>
+2026-04-23 19:46:16,531 - tf2onnx.tf_utils - INFO - Computed 0 values for constant folding
+2026-04-23 19:46:16,539 - tf2onnx.tf_utils - INFO - Computed 0 values for constant folding
+2026-04-23 19:46:16,542 - tf2onnx.tf_utils - INFO - Computed 0 values for constant folding
+2026-04-23 19:46:16,546 - tf2onnx.tf_utils - INFO - Computed 0 values for constant folding
+2026-04-23 19:46:16,585 - tf2onnx.tf_utils - INFO - Computed 0 values for constant folding
+2026-04-23 19:46:16,866 - tf2onnx.optimizer - INFO - Optimizing ONNX model
+2026-04-23 19:46:17,781 - tf2onnx.optimizer - INFO - After optimization: Cast -4 (8->4), Concat -4 (8->4), Const -51 (146->95), Expand -3 (4->1), Gather +1 (0->1), Identity -2 (2->0), Shape -1 (3->2), Slice -1 (5->4), Squeeze -3 (5->2), Transpose -45 (49->4), Unsqueeze -14 (15->1)
