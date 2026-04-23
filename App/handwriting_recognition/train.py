@@ -98,7 +98,7 @@ for line in tqdm(words):
 # ------------------ Limit dataset size for faster training ------------------
 # Change DATASET_LIMIT to use more data (full dataset ≈ 12 500 samples).
 # Set to None to use the entire dataset.
-DATASET_LIMIT = 800
+DATASET_LIMIT = None  # None = full dataset (~12 500 samples). Set to e.g. 800 for quick CPU test.
 if DATASET_LIMIT:
     dataset = dataset[:DATASET_LIMIT]
 
