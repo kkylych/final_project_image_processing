@@ -24,6 +24,56 @@ def run_train():
     return result.returncode
 
 
+def _ensure_dataset():
+    """Download and extract the IAM Words dataset if it is not present."""
+    import tarfile
+    import zipfile
+    from urllib.request import urlopen, Request
+    from io import BytesIO
+    from tqdm import tqdm
+
+    dataset_path = os.path.join(APP_DIR, "Datasets", "IAM_Words")
+    words_path   = os.path.join(dataset_path, "words")
+
+    if os.path.exists(words_path) and os.listdir(words_path):
+        return  # already downloaded
+
+    os.makedirs(dataset_path, exist_ok=True)
+    print("Dataset not found locally — downloading IAM Words (~60 MB)...")
+
+    req = Request("https://git.io/J0fjL", headers={"User-Agent": "Mozilla/5.0"})
+    response = urlopen(req)
+    total = int(response.headers.get("Content-Length", 0))
+    data  = b""
+    bar   = tqdm(total=total, unit="B", unit_scale=True, desc="Downloading")
+    while True:
+        block = response.read(1024 * 1024)
+        if not block:
+            break
+        data += block
+        bar.update(len(block))
+    bar.close()
+
+    if data[:2] == b"PK":
+        with zipfile.ZipFile(BytesIO(data)) as zf:
+            zf.extractall(os.path.join(APP_DIR, "Datasets"))
+    elif data[:2] in (b"\x1f\x8b", b"BZ"):
+        with tarfile.open(fileobj=BytesIO(data)) as tf:
+            tf.extractall(dataset_path)
+    else:
+        print(f"ERROR: Unrecognised archive format (first bytes: {data[:8].hex()})")
+        return
+
+    tgz = os.path.join(dataset_path, "words.tgz")
+    if os.path.exists(tgz):
+        print("Extracting words.tgz ...")
+        os.makedirs(words_path, exist_ok=True)
+        with tarfile.open(tgz) as tf:
+            tf.extractall(words_path)
+
+    print("Dataset ready.\n")
+
+
 def run_infer(image_path=None):
     """Run inference. If image_path is given, predict that single image."""
     import cv2
@@ -89,6 +139,7 @@ def run_infer(image_path=None):
         return 0
 
     # Batch inference on validation CSV
+    _ensure_dataset()
     import pandas as pd
     from tqdm import tqdm
 
