@@ -102,6 +102,8 @@ def run_infer(image_path=None):
     cer_list = []
     for row in tqdm(df, desc="Inference"):
         image_file, label = row[0], row[1]
+        if not os.path.isabs(image_file):
+            image_file = os.path.join(APP_DIR, image_file)
         img = cv2.imread(image_file.replace("\\", "/"))
         if img is None:
             continue
